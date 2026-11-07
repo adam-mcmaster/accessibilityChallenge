@@ -1,22 +1,55 @@
-*/
+/* ==========================================================================
+   Design tokens
+   Every text pair meets WCAG 2.2 AAA (>= 7:1), measured, including under
+   simulated protanopia / deuteranopia / tritanopia. Ratios noted inline.
+   The main area follows the user's light / dark system setting.
+   ========================================================================== */
 :root {
-    /* Brand backgrounds (original) */
-    --violet: blueviolet;     /* #8A2BE2 */
-    --purple: purple;         /* #800080 */
-    --aqua: aqua;             /* #00FFFF */
-    --ink: black;             /* #000000 */
+    color-scheme: light dark;
 
-    /* Foregrounds */
-    --on-violet: #ffffff;     /* 5.96:1 on blueviolet */
-    --on-purple: #ffffff;     /* 9.42:1 on purple */
-    --on-ink: lightblue;      /* #ADD8E6 — 13.74:1 on black (keeps the "blue on black" intent) */
-    --on-aqua: #000000;       /* 16.75:1 on aqua */
-    --link-on-aqua: indigo;   /* #4B0082 — 10.33:1 on aqua */
-    --placeholder: #3b3b3b;   /* 8.93:1 on aqua */
+    /* Brand regions (same in both themes) */
+    --violet: #5E1A9E;        /* deepened blueviolet — header + footer */
+    --purple: purple;         /* #800080 — nav */
+    --accent: aqua;           /* #00FFFF — divider lines (7.91:1 vs violet, 7.51:1 vs purple) */
+    --on-violet: #ffffff;     /* 9.92:1 */
+    --on-purple: #ffffff;     /* 9.42:1 */
 
-    /* Focus ring: white + black halo => >= 3:1 against every background above */
+    /* Search field */
+    --field: #CFF7F7;         /* soft aqua: 8.64:1 vs header */
+    --on-field: #1A1A2E;      /* 14.86:1 */
+    --placeholder: #4A4A5A;   /* 7.57:1 */
+
+    /* Main content — light theme */
+    --main-bg: #FAF8FF;
+    --main-text: #1A1A2E;     /* 16.19:1 */
+    --main-heading: #5E1A9E;  /* 9.42:1 */
+
+    /* Sidebar — light theme */
+    --side-bg: #CFF7F7;       /* soft aqua: brand colour without the glare */
+    --side-text: #1A1A2E;     /* 14.86:1 */
+    --side-link: indigo;      /* #4B0082 — 11.29:1 */
+
+    /* Focus ring: white + black halo => one band is >= 3:1 on every background */
     --focus-inner: #ffffff;
     --focus-outer: #000000;
+
+    /* Typography */
+    --font: "Atkinson Hyperlegible Next", "Atkinson Hyperlegible", system-ui, -apple-system,
+        "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        /* Soft dark instead of pure black: less halation for astigmatism */
+        --main-bg: #14101F;
+        --main-text: #EDEAF5;     /* 15.74:1 */
+        --main-heading: lightblue; /* #ADD8E6 — 12.23:1 */
+
+        /* Deep teal sidebar: avoids a bright panel beside dark content */
+        --side-bg: #0F3A3D;
+        --side-text: #E6FAFA;     /* 11.47:1 */
+        --side-link: #9FF0F0;     /* 9.57:1 */
+    }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -30,11 +63,22 @@ body {
     display: grid;
     grid-template-columns: 220px 1fr 220px;
     grid-template-rows: auto 1fr auto;
+    font-family: var(--font);
+    font-size: 1.125rem;      /* 18px at default settings; scales with user preference */
+    line-height: 1.5;
+    background: var(--main-bg);
+    color: var(--main-text);
 }
 
 img {
     max-width: 100%;
     height: auto;
+}
+
+/* Form controls don't inherit fonts by default */
+input,
+button {
+    font: inherit;
 }
 
 /* ==========================================================================
@@ -76,7 +120,7 @@ img {
     left: 0;
     z-index: 100;
     padding: 0.75em 1.25em;
-    background: indigo;
+    background: indigo;       /* 12.95:1 with white */
     color: #ffffff;
     font-weight: bold;
     text-decoration: underline;
@@ -109,21 +153,21 @@ img {
     padding: 15px 25px;
     background-color: var(--violet);
     color: var(--on-violet);
+    border-bottom: 4px solid var(--accent);
 }
 
-/* HackTrent site title (h1) */
+/* HackTrent site title (h1) — clearly the most prominent text */
 .site-title {
-    font-size: 2em;
-    background-color: var(--violet);
-    color: var(--on-violet);
+    font-size: 2.25em;
+    font-weight: bold;
+    line-height: 1.1;
+    letter-spacing: 0.01em;
 }
 
-/* Trent University tagline */
+/* Trent University tagline — secondary to the title */
 .site-tagline {
-    font-size: 2.1em;
-    background-color: var(--violet);
-    color: var(--on-violet);
-    display: flex;
+    font-size: 1.25em;
+    line-height: 1.3;
 }
 
 /* Navigation sidebar */
@@ -132,13 +176,13 @@ img {
     grid-row: 2;
     background-color: var(--purple);
     color: var(--on-purple);
-    padding: 1em;
+    padding: 1.25em 1em;
 }
 
 .site-nav ul {
     display: flex;
     flex-direction: column;
-    gap: 3em;
+    gap: 2em;
     list-style: none;
 }
 
@@ -160,20 +204,23 @@ img {
 /* Current page: shape cue (thick underline), not colour alone */
 .site-nav a[aria-current="page"] {
     text-decoration-thickness: 3px;
+    font-weight: bold;
 }
 
 /* Search bar */
 .search {
     display: flex;
     align-items: center;
-    gap: 1em;
+    gap: 0.75em;
 }
 
 /* Input field */
 .search input {
-    background-color: var(--aqua);
-    color: var(--on-aqua);
-    padding: 0.1em;
+    background-color: var(--field);
+    color: var(--on-field);
+    border: 1px solid var(--on-field);
+    border-radius: 3px;
+    padding: 0.25em 0.5em;
     min-block-size: 1.5rem;
 }
 
@@ -184,9 +231,13 @@ img {
 
 /* Go button */
 .search button {
-    background: var(--aqua);
-    color: var(--on-aqua);
-    font-size: 1em;
+    background: var(--field);
+    color: var(--on-field);
+    border: 1px solid var(--on-field);
+    border-radius: 3px;
+    padding: 0.25em 0.75em;
+    font-weight: bold;
+    cursor: pointer;
     min-block-size: 1.5rem;
     min-inline-size: 1.5rem;
 }
@@ -198,10 +249,9 @@ img {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: var(--ink);
-    color: var(--on-ink);
-    text-align: center;
-    padding-bottom: 1em;
+    background-color: var(--main-bg);
+    color: var(--main-text);
+    padding: 1.5em 1.5em 2em;
 }
 
 .content > div {
@@ -209,25 +259,35 @@ img {
     max-width: 100%;
 }
 
-/* Main content header in center */
+/* Main content heading — centred headings are fine; body text is not */
 .content h2 {
     text-align: center;
     font-size: 2em;
-    padding-bottom: 1em;
+    font-weight: bold;
+    line-height: 1.2;
+    color: var(--main-heading);
+    padding-bottom: 0.75em;
 }
 
-/* Content text */
+.content img {
+    display: block;
+    margin-inline: auto;
+    border-radius: 4px;
+}
+
+/* Body text: left-aligned, comfortable line length (dyslexia-friendly) */
 .content p {
+    text-align: left;
+    max-width: 65ch;
+    margin-inline: auto;
     padding-top: 1em;
 }
 
-/* Replaces the old <br> spacer between paragraphs */
 .content p + p {
-    margin-top: 1.15em;
+    margin-top: 0.5em;
 }
 
 .content table {
-    color: whitesmoke;
     padding: 1em;
     text-align: center;
 }
@@ -239,16 +299,15 @@ img {
 /* Right sidebar */
 .right-bar {
     text-align: center;
-    padding: 1em;
+    padding: 1.25em 1em;
     grid-column: 3;
     grid-row: 2;
-    background-color: var(--aqua);
-    color: var(--on-aqua);
+    background-color: var(--side-bg);
+    color: var(--side-text);
 }
 
 .right-bar p {
     padding-bottom: 0.5em;
-    font-size: 1.1em;
 }
 
 /* role="list" in the HTML keeps list semantics in Safari/VoiceOver */
@@ -260,8 +319,20 @@ img {
     padding-bottom: 1em;
 }
 
+.right-bar img {
+    display: block;
+    margin: 0 auto 0.5em;
+    border-radius: 4px;
+}
+
+.right-bar h3 {
+    font-weight: bold;
+    line-height: 1.3;
+}
+
 .right-bar a {
-    color: var(--link-on-aqua);
+    color: var(--side-link);
+    text-underline-offset: 0.15em;
 }
 
 /* Footer */
@@ -271,10 +342,11 @@ img {
     text-align: center;
     background-color: var(--violet);
     color: var(--on-violet);
+    border-top: 4px solid var(--accent);
     padding: 1em;
 }
 
-/* Footer text + legal links (inline, as before) */
+/* Footer text + legal links (inline) */
 .foot p,
 .foot nav,
 .foot ul,
@@ -289,6 +361,7 @@ img {
 
 .foot a {
     color: var(--on-violet);
+    text-underline-offset: 0.15em;
 }
 
 /* Inline links: >= 24px tall hit area (WCAG 2.5.8) with zero layout shift */
@@ -326,6 +399,10 @@ img {
         flex-direction: row;
         flex-wrap: wrap;
         gap: 1em 2em;
+    }
+
+    .content {
+        padding-inline: 1em;
     }
 
     .search {
