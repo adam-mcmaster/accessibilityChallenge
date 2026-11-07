@@ -1,3 +1,30 @@
+*/
+:root {
+    /* Brand backgrounds (original) */
+    --violet: blueviolet;     /* #8A2BE2 */
+    --purple: purple;         /* #800080 */
+    --aqua: aqua;             /* #00FFFF */
+    --ink: black;             /* #000000 */
+
+    /* Foregrounds */
+    --on-violet: #ffffff;     /* 5.96:1 on blueviolet */
+    --on-purple: #ffffff;     /* 9.42:1 on purple */
+    --on-ink: lightblue;      /* #ADD8E6 — 13.74:1 on black (keeps the "blue on black" intent) */
+    --on-aqua: #000000;       /* 16.75:1 on aqua */
+    --link-on-aqua: indigo;   /* #4B0082 — 10.33:1 on aqua */
+    --placeholder: #3b3b3b;   /* 8.93:1 on aqua */
+
+    /* Focus ring: white + black halo => >= 3:1 against every background above */
+    --focus-inner: #ffffff;
+    --focus-outer: #000000;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    html {
+        scroll-behavior: smooth;
+    }
+}
+
 body {
     margin: 0;
     display: grid;
@@ -5,61 +32,163 @@ body {
     grid-template-rows: auto 1fr auto;
 }
 
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* ==========================================================================
+   Accessibility utilities
+   ========================================================================== */
+
+/* Visible to screen readers only */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Keyboard focus: crisp dual-tone ring, only for keyboard (not mouse/touch) */
+:focus-visible {
+    outline: 3px solid var(--focus-inner);
+    outline-offset: 2px;
+    box-shadow: 0 0 0 7px var(--focus-outer);
+    border-radius: 2px;
+}
+
+/* <main> receives focus programmatically from the skip link; it is not a control */
+#main-content:focus {
+    outline: none;
+    box-shadow: none;
+}
+
+/* Skip link: hidden until focused, then slides in */
+.skip-link {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    padding: 0.75em 1.25em;
+    background: indigo;
+    color: #ffffff;
+    font-weight: bold;
+    text-decoration: underline;
+    transform: translateY(-120%);
+}
+
+.skip-link:focus {
+    transform: translateY(0.5em) translateX(0.5em);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .skip-link {
+        transition: transform 0.15s ease-out;
+    }
+}
+
+/* ==========================================================================
+   Layout regions
+   ========================================================================== */
+
 /* Top header + search bar */
-section:first-child {
+.site-header {
     grid-column: 1 / 4;
     grid-row: 1;
     display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
     align-items: center;
     justify-content: space-between;
     padding: 15px 25px;
-    background-color: blueviolet;
+    background-color: var(--violet);
+    color: var(--on-violet);
 }
 
-/* Welcome to HackTrent header */
-h2 {
+/* HackTrent site title (h1) */
+.site-title {
     font-size: 2em;
-    background-color: blueviolet;
-    color: purple;
+    background-color: var(--violet);
+    color: var(--on-violet);
 }
 
 /* Trent University tagline */
-h3 {
+.site-tagline {
     font-size: 2.1em;
-    background-color: blueviolet;
-    color: purple;
+    background-color: var(--violet);
+    color: var(--on-violet);
     display: flex;
 }
 
 /* Navigation sidebar */
-section:nth-child(2) {
+.site-nav {
     grid-column: 1;
     grid-row: 2;
-    display: flex;
-    flex-direction: column;
-    gap: 3em;
-    background-color: purple;
-    color: blue;
+    background-color: var(--purple);
+    color: var(--on-purple);
     padding: 1em;
 }
 
+.site-nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 3em;
+    list-style: none;
+}
+
+.site-nav a {
+    display: block;
+    color: var(--on-purple);
+    text-decoration: none;
+    /* Larger hit area (WCAG 2.5.8) without moving anything visually */
+    padding-block: 0.5em;
+    margin-block: -0.5em;
+}
+
+.site-nav a:hover,
+.site-nav a[aria-current="page"] {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+/* Current page: shape cue (thick underline), not colour alone */
+.site-nav a[aria-current="page"] {
+    text-decoration-thickness: 3px;
+}
+
 /* Search bar */
-div.search {
+.search {
     display: flex;
     align-items: center;
     gap: 1em;
 }
 
 /* Input field */
-div.search input {
-    background-color: aqua;
+.search input {
+    background-color: var(--aqua);
+    color: var(--on-aqua);
     padding: 0.1em;
+    min-block-size: 1.5rem;
+}
+
+.search input::placeholder {
+    color: var(--placeholder);
+    opacity: 1;
 }
 
 /* Go button */
-div.search button {
-    background: aqua;
+.search button {
+    background: var(--aqua);
+    color: var(--on-aqua);
     font-size: 1em;
+    min-block-size: 1.5rem;
+    min-inline-size: 1.5rem;
 }
 
 /* Content */
@@ -69,22 +198,32 @@ div.search button {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: black;
-    color: darkblue;
+    background-color: var(--ink);
+    color: var(--on-ink);
     text-align: center;
     padding-bottom: 1em;
 }
 
-/*Main content header in center*/
-.content h4 {
+.content > div {
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* Main content header in center */
+.content h2 {
     text-align: center;
     font-size: 2em;
     padding-bottom: 1em;
 }
 
-/*Content text*/
+/* Content text */
 .content p {
     padding-top: 1em;
+}
+
+/* Replaces the old <br> spacer between paragraphs */
+.content p + p {
+    margin-top: 1.15em;
 }
 
 .content table {
@@ -93,8 +232,7 @@ div.search button {
     text-align: center;
 }
 
-.content table td
-{
+.content table td {
     padding: 1em;
 }
 
@@ -104,7 +242,8 @@ div.search button {
     padding: 1em;
     grid-column: 3;
     grid-row: 2;
-    background-color: aqua;
+    background-color: var(--aqua);
+    color: var(--on-aqua);
 }
 
 .right-bar p {
@@ -112,8 +251,17 @@ div.search button {
     font-size: 1.1em;
 }
 
+/* role="list" in the HTML keeps list semantics in Safari/VoiceOver */
+.right-bar ul {
+    list-style: none;
+}
+
 .right-bar ul li {
     padding-bottom: 1em;
+}
+
+.right-bar a {
+    color: var(--link-on-aqua);
 }
 
 /* Footer */
@@ -121,13 +269,77 @@ div.search button {
     grid-column: 1 / 4;
     grid-row: 3;
     text-align: center;
-    background-color: blueviolet;
-    color: white;
+    background-color: var(--violet);
+    color: var(--on-violet);
     padding: 1em;
 }
 
-/*Footer text*/
-.foot span {
+/* Footer text + legal links (inline, as before) */
+.foot p,
+.foot nav,
+.foot ul,
+.foot li {
+    display: inline;
+}
+
+.foot p,
+.foot nav {
     padding: 1em;
-    color: purple;
+}
+
+.foot a {
+    color: var(--on-violet);
+}
+
+/* Inline links: >= 24px tall hit area (WCAG 2.5.8) with zero layout shift */
+.foot a,
+.right-bar h3 a {
+    display: inline-block;
+    padding-block: 0.25em;
+    margin-block: -0.25em;
+}
+
+/* ==========================================================================
+   Reflow: single column at narrow widths / high zoom (WCAG 1.4.10)
+   em-based so it also responds to text zoom.
+   ========================================================================== */
+@media (max-width: 48em) {
+    body {
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: auto;
+    }
+
+    .site-header,
+    .site-nav,
+    .content,
+    .right-bar,
+    .foot {
+        grid-column: 1;
+        grid-row: auto;
+    }
+
+    .site-header {
+        padding: 15px 1em;
+    }
+
+    .site-nav ul {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 1em 2em;
+    }
+
+    .search {
+        flex-wrap: wrap;
+    }
+
+    .search input {
+        min-width: 0;
+        flex: 1 1 8em;
+    }
+
+    .foot p,
+    .foot nav {
+        display: block;
+        padding: 0.25em 0;
+    }
 }
